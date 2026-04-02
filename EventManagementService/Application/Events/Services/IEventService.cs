@@ -8,7 +8,7 @@ public interface IEventService
     public IEnumerable<EventDto> GetAllEvents();
     public EventDto? GetEventById(int id);
     public bool DeleteEventById(int id);
-    public CreateEventDto CreateEvent(EventModel eventModel);
+    public EventDto CreateEvent(EventModel eventModel);
     
-    public CreateEventDto? UpdateEvent(EventModel eventModel, int eventId);
+    public EventDto? UpdateEvent(EventModel eventModel, int eventId);
 }

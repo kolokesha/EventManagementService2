@@ -11,76 +11,55 @@ public class EventService(IEventRepository<EventModel> eventRepository) : IEvent
     public IEnumerable<EventDto> GetAllEvents()
     {
         var events = eventRepository.GetAll();
-        
-        var result = events.Select(x => new EventDto
-        {
-            Id = x.Id,
-            Title = x.Title,
-            Description = x.Description,
-            EndAt = x.EndAt,
-            StartAt = x.StartAt,
-        });
-        
-        return result;
+        return events.Select(MapToDto);
     }
 
-    public EventDto GetEventById(int id)
+    public EventDto? GetEventById(int id)
     {
-        var foundedEvent = eventRepository.GetById(id);
-        if (foundedEvent == null)
-            return null;
+        var entity = eventRepository.GetById(id);
+        return entity == null ? null : MapToDto(entity);
+    }
 
-        return new EventDto
-        {
-            Id = foundedEvent.Id,
-            Title = foundedEvent.Title,
-            Description = foundedEvent.Description,
-            StartAt = foundedEvent.StartAt,
-            EndAt = foundedEvent.EndAt,
-        };
+    public EventDto CreateEvent(EventModel eventModel)
+    {
+        Validate(eventModel);
+
+        var created = eventRepository.Add(eventModel);
+        return MapToDto(created);
+    }
+
+    public EventDto? UpdateEvent(EventModel eventModel, int eventId)
+    {
+        Validate(eventModel);
+
+        var updated = eventRepository.Update(eventModel, eventId);
+        return updated == null ? null : MapToDto(updated);
     }
 
     public bool DeleteEventById(int id)
     {
+        var existing = eventRepository.GetById(id);
+        if (existing == null) return false;
+
         eventRepository.Delete(id);
         return true;
     }
 
-    public CreateEventDto CreateEvent(EventModel eventModel)
+    private static EventDto MapToDto(EventModel x)
     {
-        if(eventModel.EndAt < eventModel.StartAt)
+        return new EventDto
         {
-            throw new ValidationException("Дата окончания не может быть раньше даты начала");
-        }
-        
-        var result = eventRepository.Add(eventModel);
-
-        return new CreateEventDto()
-        {
-            Title = result.Title,
-            Description = result.Description,
-            StartAt = result.StartAt,
-            EndAt = result.EndAt,
+            Id = x.Id,
+            Title = x.Title,
+            Description = x.Description,
+            StartAt = x.StartAt,
+            EndAt = x.EndAt,
         };
-        
     }
 
-    public CreateEventDto UpdateEvent(EventModel eventModel, int eventId)
+    private static void Validate(EventModel model)
     {
-        var updatedEvent = eventRepository.Update(eventModel, eventId);
-        var result = new CreateEventDto();
-
-        if (updatedEvent != null)
-        {
-            result = new CreateEventDto
-            {
-                Title = updatedEvent.Title,
-                Description = updatedEvent.Description,
-                StartAt = updatedEvent.StartAt,
-                EndAt = updatedEvent.EndAt,
-            };
-        }
-        
-        return result;
+        if (model.EndAt < model.StartAt)
+            throw new ValidationException("Дата окончания не может быть раньше даты начала");
     }
 }

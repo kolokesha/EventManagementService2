@@ -10,75 +10,65 @@ namespace EventManagementService.Controllers;
 public class EventController(IEventService eventService) : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<EventDto> GetAllEvents()
+    [ProducesResponseType(typeof(IEnumerable<EventDto>), StatusCodes.Status200OK)]
+    public ActionResult<IEnumerable<EventDto>> GetAllEvents()
     {
-        return eventService.GetAllEvents();
+        var events = eventService.GetAllEvents();
+        return Ok(events);
     }
-    
+
     [HttpGet("{id}", Name = "GetEventById")]
-    public IActionResult GetEventById(int id)
+    [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<EventDto> GetEventById(int id)
     {
-        var foundedEvent = eventService.GetEventById(id);
-        if (foundedEvent == null)
-        {
-            return NotFound();
-        }
-        return Ok(foundedEvent);
+        var eventDto = eventService.GetEventById(id);
+        return eventDto == null ? NotFound() : Ok(eventDto);
     }
 
     [HttpPost]
-    public CreateEventDto CreateEvent([FromBody] CreateEventDto request)
+    [ProducesResponseType(typeof(EventDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult<EventDto> CreateEvent([FromBody] CreateEventDto request)
     {
-        var eventModel = new EventModel
-        {
-            Title = request.Title,
-            Description = request.Description,
-            StartAt = request.StartAt,
-            EndAt = request.EndAt
-        };
-        
+        var eventModel = MapToModel(request);
         var createdEvent = eventService.CreateEvent(eventModel);
-        
-        return createdEvent;
+
+        return CreatedAtRoute(
+            "GetEventById",
+            new { id = createdEvent.Id },
+            createdEvent);
     }
 
     [HttpPut("{id}")]
-    public IActionResult UpdateEvent(int id, [FromBody] CreateEventDto request)
+    [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult<EventDto> UpdateEvent(int id, [FromBody] CreateEventDto request)
     {
-        var foundedEvent = eventService.GetEventById(id);
-        
-        if (foundedEvent == null)
-        {
-            return NotFound();
-        }
-        var eventModel = new EventModel()
+        var eventModel = MapToModel(request);
+        var updatedEvent = eventService.UpdateEvent(eventModel, id);
+
+        return updatedEvent == null ? NotFound() : Ok(updatedEvent);
+    }
+
+    [HttpDelete("{id}", Name = "DeleteEventById")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult DeleteEventById(int id)
+    {
+        var deleted = eventService.DeleteEventById(id);
+        return deleted ? NoContent() : NotFound();
+    }
+
+    private static EventModel MapToModel(CreateEventDto request)
+    {
+        return new EventModel
         {
             Title = request.Title,
             Description = request.Description,
             StartAt = request.StartAt,
             EndAt = request.EndAt
         };
-        
-        var result = eventService.UpdateEvent(eventModel, id);
-        
-        if (result == null)
-        {
-            return NotFound();
-        }
-        
-        return Ok(result);
-        
-    }
-
-    [HttpDelete("{id}", Name = "DeleteEventById")]
-    public IActionResult DeleteEventById(int id)
-    {
-        var foundedEvent = eventService.GetEventById(id);
-        if (foundedEvent == null)
-        {
-            return NotFound();
-        }
-        eventService.DeleteEventById(id);
-        return Ok();
     }
 }
