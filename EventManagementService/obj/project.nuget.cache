@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "FTK1MYRrdbY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Alexey.Kolomeitsev\\RiderProjects\\EventManagementService\\EventManagementService\\EventManagementService.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.14\\microsoft.aspnetcore.openapi.9.0.14.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\microsoft.extensions.apidescription.server\\9.0.0\\microsoft.extensions.apidescription.server.9.0.0.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\microsoft.openapi\\1.6.25\\microsoft.openapi.1.6.25.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\swashbuckle.aspnetcore\\9.0.6\\swashbuckle.aspnetcore.9.0.6.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\9.0.6\\swashbuckle.aspnetcore.swagger.9.0.6.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\9.0.6\\swashbuckle.aspnetcore.swaggergen.9.0.6.nupkg.sha512",
+    "C:\\Users\\Alexey.Kolomeitsev\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\9.0.6\\swashbuckle.aspnetcore.swaggerui.9.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}
