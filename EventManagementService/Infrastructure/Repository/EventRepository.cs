@@ -21,7 +21,11 @@ public class EventRepository<T> : IEventRepository<T> where T : class, IEntity
 
     public T Add(T eventModel)
     {
-        _events.TryAdd(_idCounter++, eventModel);
+        var newId = _idCounter++;
+        
+        eventModel.Id = newId;
+        _events.TryAdd(newId, eventModel);
+        
         return eventModel;
     }
 
@@ -30,6 +34,7 @@ public class EventRepository<T> : IEventRepository<T> where T : class, IEntity
         if (!_events.TryGetValue(id, out var entity))
             return null;
 
+        eventModel.Id = id;
         _events[id] = eventModel;
         return eventModel;
 

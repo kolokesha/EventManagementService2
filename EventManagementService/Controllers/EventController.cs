@@ -67,8 +67,8 @@ public class EventController(IEventService eventService) : ControllerBase
         {
             Title = request.Title,
             Description = request.Description,
-            StartAt = request.StartAt,
-            EndAt = request.EndAt
+            StartAt = (DateTime)request.StartAt!,
+            EndAt = (DateTime)request.EndAt!
         };
     }
 }
