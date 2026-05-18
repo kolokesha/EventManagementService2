@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EventManagementService.Application.Events.Dto.Common;
 
 namespace EventManagementService.Middlewares;
 
@@ -6,34 +7,48 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
 {
     public async Task InvokeAsync(HttpContext httpContext, ILoggerFactory loggerFactory)
     {
-        var logger = loggerFactory.CreateLogger(nameof(ExceptionHandlingMiddleware));
         try
         {
             await next(httpContext);
         }
-        catch (ValidationException ex)
-        {
-            logger.LogWarning(ex, "Validation error");
-
-            httpContext.Response.StatusCode = 400;
-
-            var response = new
-            {
-                Message = ex.Message
-            };
-
-            await httpContext.Response.WriteAsJsonAsync(response);
-        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled error");
-
-            httpContext.Response.StatusCode = 500;
-
-            await httpContext.Response.WriteAsJsonAsync(new
-            {
-                Message = "Внутренняя ошибка сервера"
-            });
+            await HandleException(httpContext, ex);
         }
+    }
+
+    private async Task HandleException(HttpContext httpContext, Exception ex)
+    {
+        logger.LogError(
+            ex,
+            "Unhandled exception. Method={Method}, Path={Path}, RequestId={RequestId}",
+            httpContext.Request.Method,
+            httpContext.Request.Path,
+            httpContext.Request.Headers["x-request-id"]);
+
+        if (httpContext.Response.HasStarted) return;
+
+        var statusCode = MapStatusCode(ex);
+
+        httpContext.Response.StatusCode = statusCode;
+        httpContext.Response.ContentType = "application/json";
+
+        var error = new ProblemDetails
+        {
+            Status = statusCode,
+            Detail = ex.Message
+        };
+
+        await httpContext.Response.WriteAsJsonAsync(error);
+    }
+
+    private static int MapStatusCode(Exception ex)
+    {
+        return ex switch
+        {
+            ValidationException ve => StatusCodes.Status400BadRequest,
+            NotFoundException nfe => StatusCodes.Status404NotFound,
+            _ => StatusCodes.Status500InternalServerError
+        };
     }
 }

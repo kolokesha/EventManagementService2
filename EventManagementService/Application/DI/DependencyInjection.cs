@@ -1,5 +1,6 @@
 ﻿using EventManagementService.Application.Events.Services;
 using EventManagementService.Infrastructure.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventManagementService.Application.DI;
 

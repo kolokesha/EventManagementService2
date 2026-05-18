@@ -11,9 +11,9 @@ public class EventController(IEventService eventService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<EventDto>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<EventDto>> GetAllEvents()
+    public ActionResult<PaginatedResult<EventDto>> GetAllEvents(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
-        var events = eventService.GetAllEvents();
+        var events = eventService.GetAllEvents(page, pageSize, title,  from, to);
         return Ok(events);
     }
 
