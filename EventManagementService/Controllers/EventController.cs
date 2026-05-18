@@ -1,4 +1,5 @@
-﻿using EventManagementService.Application.Events.Dto;
+﻿using EventManagementService.Application.Common;
+using EventManagementService.Application.Events.Dto;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace EventManagementService.Controllers;
 public class EventController(IEventService eventService) : ControllerBase
 {
     [HttpGet]
-    public IEnumerable<EventDto> GetAllEvents()
+    public PaginatedResult<EventDto> GetAllEvents(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
-        return eventService.GetAllEvents();
+        return eventService.GetAllEvents(page, pageSize, title,  from, to);
     }
     
     [HttpGet("{id}", Name = "GetEventById")]

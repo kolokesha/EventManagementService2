@@ -1,10 +1,12 @@
-﻿namespace EventManagementService.Application.Events.Services;
+﻿using EventManagementService.Domain.Entities;
 
-public interface IEventRepository<T>
+namespace EventManagementService.Application.Events.Services;
+
+public interface IEventRepository
 {
-    List<T> GetAll();
-    T? GetById(int id);
-    T Add(T eventModel);
-    T? Update(T eventModel, int id);
+    List<EventModel> GetAll(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null);
+    EventModel? GetById(int id);
+    EventModel Add(EventModel eventModel);
+    EventModel? Update(EventModel eventModel, int id);
     bool Delete(int id);
 }

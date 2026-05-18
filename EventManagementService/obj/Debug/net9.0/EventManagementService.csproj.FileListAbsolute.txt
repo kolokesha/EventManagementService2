@@ -33,3 +33,4 @@ C:\Users\Alexey.Kolomeitsev\RiderProjects\EventManagementService\EventManagement
 C:\Users\Alexey.Kolomeitsev\RiderProjects\EventManagementService\EventManagementService\obj\Debug\net9.0\EventManagementService.pdb
 C:\Users\Alexey.Kolomeitsev\RiderProjects\EventManagementService\EventManagementService\obj\Debug\net9.0\EventManagementService.genruntimeconfig.cache
 C:\Users\Alexey.Kolomeitsev\RiderProjects\EventManagementService\EventManagementService\obj\Debug\net9.0\ref\EventManagementService.dll
+C:\Users\Alexey.Kolomeitsev\RiderProjects\EventManagementService\EventManagementService\obj\Debug\net9.0\EventManagementService.sourcelink.json

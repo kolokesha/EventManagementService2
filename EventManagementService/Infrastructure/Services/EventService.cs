@@ -1,27 +1,37 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EventManagementService.Application.Common;
 using EventManagementService.Application.Events;
 using EventManagementService.Application.Events.Dto;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace EventManagementService.Infrastructure.Services;
 
-public class EventService(IEventRepository<EventModel> eventRepository) : IEventService
+public class EventService(IEventRepository eventRepository) : IEventService
 {
-    public IEnumerable<EventDto> GetAllEvents()
+    public PaginatedResult<EventDto> GetAllEvents(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
-        var events = eventRepository.GetAll();
+        var events = eventRepository.GetAll(page,pageSize, title, from, to);
         
-        var result = events.Select(x => new EventDto
+        var totalEvents = events.Count;
+
+        var eventDto = events.Select(x => new EventDto()
         {
             Id = x.Id,
             Title = x.Title,
             Description = x.Description,
             EndAt = x.EndAt,
-            StartAt = x.StartAt,
+            StartAt = x.StartAt
         });
-        
-        return result;
+
+        return new PaginatedResult<EventDto>
+        {
+            TotalCount = totalEvents,
+            Page = page,
+            PageSize = pageSize,
+            Items = eventDto
+        };
     }
 
     public EventDto GetEventById(int id)
@@ -57,6 +67,7 @@ public class EventService(IEventRepository<EventModel> eventRepository) : IEvent
 
         return new CreateEventDto()
         {
+            Id = result.Id,
             Title = result.Title,
             Description = result.Description,
             StartAt = result.StartAt,
@@ -67,6 +78,10 @@ public class EventService(IEventRepository<EventModel> eventRepository) : IEvent
 
     public CreateEventDto UpdateEvent(EventModel eventModel, int eventId)
     {
+        if(eventModel.EndAt < eventModel.StartAt)
+        {
+            throw new ValidationException("Дата окончания не может быть раньше даты начала");
+        }
         var updatedEvent = eventRepository.Update(eventModel, eventId);
         var result = new CreateEventDto();
 
