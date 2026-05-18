@@ -78,6 +78,11 @@ public class EventService(IEventRepository eventRepository) : IEventService
 
     public CreateEventDto UpdateEvent(EventModel eventModel, int eventId)
     {
+        if(eventModel.EndAt < eventModel.StartAt)
+        {
+            throw new ValidationException("Дата окончания не может быть раньше даты начала");
+        }
+        
         var updatedEvent = eventRepository.Update(eventModel, eventId);
         var result = new CreateEventDto();
 

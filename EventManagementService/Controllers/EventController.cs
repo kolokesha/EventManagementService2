@@ -1,4 +1,5 @@
-﻿using EventManagementService.Application.Events.Dto;
+﻿using EventManagementService.Application.Common;
+using EventManagementService.Application.Events.Dto;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
