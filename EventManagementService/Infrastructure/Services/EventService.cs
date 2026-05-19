@@ -2,6 +2,7 @@
 using EventManagementService.Application.Common;
 using EventManagementService.Application.Events;
 using EventManagementService.Application.Events.Dto;
+using EventManagementService.Application.Events.Dto.Common;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,11 +13,9 @@ public class EventService(IEventRepository eventRepository) : IEventService
 {
     public PaginatedResult<EventDto> GetAllEvents(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
-        var events = eventRepository.GetAll(page,pageSize, title, from, to);
-        
-        var totalEvents = events.Count;
+        var events = eventRepository.GetAll(page, pageSize, title, from, to);
 
-        var eventDto = events.Select(x => new EventDto()
+        var eventDto = events.Items.Select(x => new EventDto()
         {
             Id = x.Id,
             Title = x.Title,
@@ -27,7 +26,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
 
         return new PaginatedResult<EventDto>
         {
-            TotalCount = totalEvents,
+            TotalCount = events.TotalCount,
             Page = page,
             PageSize = pageSize,
             Items = eventDto
@@ -38,7 +37,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
     {
         var foundedEvent = eventRepository.GetById(id);
         if (foundedEvent == null)
-            return null;
+            throw new NotFoundException("Event not found"); 
 
         return new EventDto
         {
@@ -82,6 +81,10 @@ public class EventService(IEventRepository eventRepository) : IEventService
         {
             throw new ValidationException("Дата окончания не может быть раньше даты начала");
         }
+        
+        var foundedEvent = eventRepository.GetById(eventId);
+        if (foundedEvent == null)
+            throw new NotFoundException("Event not found"); 
         
         var updatedEvent = eventRepository.Update(eventModel, eventId);
         var result = new CreateEventDto();

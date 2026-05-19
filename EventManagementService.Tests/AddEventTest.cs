@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using EventManagementService.Application.Events.Dto.Common;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
 using EventManagementService.Infrastructure.Repository;
@@ -121,7 +124,8 @@ public class AddEventTest
         var deleted = service.DeleteEventById(created.Id);
 
         Assert.True(deleted);
-        Assert.Null(service.GetEventById(created.Id));
+        Assert.Throws<NotFoundException>(() =>
+            service.GetEventById(created.Id));
     }
     
     [Fact]
@@ -192,7 +196,7 @@ public class AddEventTest
 
         var result = service.GetAllEvents(page: 2, pageSize: 5);
 
-        Assert.Equal(5, result.TotalCount);
+        Assert.Equal(20, result.TotalCount);
     }
     
     [Fact]
@@ -229,9 +233,7 @@ public class AddEventTest
         var repo = CreateRepo();
         var service = new EventService(repo);
 
-        var result = service.GetEventById(999);
-
-        Assert.Null(result);
+        Assert.Throws<NotFoundException>(() => service.GetEventById(999));
     }
     
     [Fact]
@@ -269,6 +271,23 @@ public class AddEventTest
         
         Assert.Throws<ValidationException>(() =>
             service.UpdateEvent(model, created.Id));
+    }
+    
+    [Fact]
+    public void UpdateEvent_NonExistingId_ShouldThrowNotFoundException()
+    {
+        var repo = CreateRepo();
+        var service = new EventService(repo);
+
+        var model = new EventModel
+        {
+            Title = "New Title",
+            StartAt = DateTime.Now,
+            EndAt = DateTime.Now.AddHours(1)
+        };
+
+        Assert.Throws<NotFoundException>(() =>
+            service.UpdateEvent(model, 999));
     }
     
     

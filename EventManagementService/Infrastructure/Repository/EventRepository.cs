@@ -9,7 +9,7 @@ public class EventRepository : IEventRepository
     private readonly Dictionary<int, EventModel> _events = new();
     private int _idCounter = 0;
     
-    public List<EventModel> GetAll(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
+    public (List<EventModel> Items, int TotalCount) GetAll(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
         var query = _events.Values.AsEnumerable();
 
@@ -28,10 +28,13 @@ public class EventRepository : IEventRepository
             query = query.Where(x => x.EndAt <= to.Value);
         }
 
-        return query
+        var totalCount = query.Count();
+        var items = query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToList();
+        
+        return (items, totalCount);
     }
 
     public EventModel? GetById(int id)
