@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using EventManagementService.Application.Common;
-using EventManagementService.Application.Events;
 using EventManagementService.Application.Events.Dto;
 using EventManagementService.Application.Events.Dto.Common;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace EventManagementService.Infrastructure.Services;
 

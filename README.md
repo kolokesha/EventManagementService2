@@ -104,6 +104,16 @@ GET /event/{id}
 
 ---
 
+Query параметры:
+page (default = 1)
+pageSize (default = 10)
+title (optional)
+from (optional)
+to (optional)
+
+Пример:
+GET /event?page=1&pageSize=10&title=Music
+
 ### Создать событие
 
 ```
@@ -114,10 +124,18 @@ POST /event
 
 ```json
 {
-  "title": "My Event",
-  "description": "Some description",
-  "startAt": "2025-01-01T10:00:00",
-  "endAt": "2025-01-01T12:00:00"
+  "totalCount": 20,
+  "page": 1,
+  "pageSize": 10,
+  "items": [
+    {
+      "id": 1,
+      "title": "Music Event",
+      "description": "Some description",
+      "startAt": "2025-01-01T10:00:00",
+      "endAt": "2025-01-01T12:00:00"
+    }
+  ]
 }
 ```
 
