@@ -15,7 +15,7 @@ public class EventRepository : IEventRepository
 
         if (!string.IsNullOrEmpty(title))
         {
-            query = query.Where(x => x.Title.Contains(title));
+            query = query.Where(x => x.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
         }
         
         if (from.HasValue)
