@@ -49,6 +49,10 @@ public class EventService(IEventRepository eventRepository) : IEventService
 
     public bool DeleteEventById(int id)
     {
+        var foundedEvent = eventRepository.GetById(id);
+        if (foundedEvent == null)
+            throw new NotFoundException("Event not found"); 
+        
         eventRepository.Delete(id);
         return true;
     }
