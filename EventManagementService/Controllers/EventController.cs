@@ -21,7 +21,7 @@ public class EventController(IEventService eventService) : ControllerBase
     [HttpGet("{id}", Name = "GetEventById")]
     [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<EventDto> GetEventById(int id)
+    public ActionResult<EventDto> GetEventById(Guid id)
     {
         var eventDto = eventService.GetEventById(id);
         return Ok(eventDto);
@@ -45,7 +45,7 @@ public class EventController(IEventService eventService) : ControllerBase
     [ProducesResponseType(typeof(EventDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<EventDto> UpdateEvent(int id, [FromBody] CreateEventDto request)
+    public ActionResult<EventDto> UpdateEvent(Guid id, [FromBody] CreateEventDto request)
     {
         var eventModel = MapToModel(request);
         var updatedEvent = eventService.UpdateEvent(eventModel, id);
@@ -56,7 +56,7 @@ public class EventController(IEventService eventService) : ControllerBase
     [HttpDelete("{id}", Name = "DeleteEventById")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult DeleteEventById(int id)
+    public IActionResult DeleteEventById(Guid id)
     {
         var deleted = eventService.DeleteEventById(id);
         return NoContent();

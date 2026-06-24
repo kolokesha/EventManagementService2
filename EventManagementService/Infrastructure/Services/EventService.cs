@@ -31,7 +31,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
         };
     }
 
-    public EventDto GetEventById(int id)
+    public EventDto GetEventById(Guid id)
     {
         var foundedEvent = eventRepository.GetById(id);
         if (foundedEvent == null)
@@ -47,7 +47,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
         };
     }
 
-    public bool DeleteEventById(int id)
+    public bool DeleteEventById(Guid id)
     {
         var foundedEvent = eventRepository.GetById(id);
         if (foundedEvent == null)
@@ -77,7 +77,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
         
     }
 
-    public CreateEventDto UpdateEvent(EventModel eventModel, int eventId)
+    public CreateEventDto UpdateEvent(EventModel eventModel, Guid eventId)
     {
         if(eventModel.EndAt < eventModel.StartAt)
         {
@@ -95,6 +95,7 @@ public class EventService(IEventRepository eventRepository) : IEventService
         {
             result = new CreateEventDto
             {
+                Id = updatedEvent.Id,
                 Title = updatedEvent.Title,
                 Description = updatedEvent.Description,
                 StartAt = updatedEvent.StartAt,

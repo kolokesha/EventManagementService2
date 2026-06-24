@@ -6,8 +6,7 @@ namespace EventManagementService.Infrastructure.Repository;
 
 public class EventRepository : IEventRepository
 {
-    private readonly Dictionary<int, EventModel> _events = new();
-    private int _idCounter = 0;
+    private readonly Dictionary<Guid, EventModel> _events = new();
     
     public (List<EventModel> Items, int TotalCount) GetAll(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
@@ -37,7 +36,7 @@ public class EventRepository : IEventRepository
         return (items, totalCount);
     }
 
-    public EventModel? GetById(int id)
+    public EventModel? GetById(Guid id)
     {
         _events.TryGetValue(id, out var entity);
         return entity;
@@ -45,7 +44,7 @@ public class EventRepository : IEventRepository
 
     public EventModel Add(EventModel eventModel)
     {
-        var newId = _idCounter++;
+        var newId = Guid.NewGuid();
         
         eventModel.Id = newId;
         _events.TryAdd(newId, eventModel);
@@ -53,7 +52,7 @@ public class EventRepository : IEventRepository
         return eventModel;
     }
 
-    public EventModel? Update(EventModel eventModel, int id)
+    public EventModel? Update(EventModel eventModel, Guid id)
     {
         if (!_events.TryGetValue(id, out var entity))
             return null;
@@ -64,7 +63,7 @@ public class EventRepository : IEventRepository
 
     }
 
-    public bool Delete(int id)
+    public bool Delete(Guid id)
     {
         _events.Remove(id);
         return true;
