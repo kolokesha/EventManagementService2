@@ -30,25 +30,31 @@ builder.Services.AddControllers()
         options.InvalidModelStateResponseFactory = context =>
         {
             var errors = context.ModelState
-                .Where(kv => kv.Value?.Errors.Count > 0)
-                .ToDictionary(
-                    kv => kv.Key,
-                    kv => kv.Value!.Errors.Select(e => e.ErrorMessage));
-            
-            var customResponse = new
-            {
-                Message = "Ошибки валидации",
-                Errors = errors
-            };
-            
+                .Where(x => x.Value?.Errors.Count > 0)
+                .SelectMany(x => x.Value!.Errors.Select(e => new
+                {
+                    Field = x.Key,
+                    Error = e.ErrorMessage
+                }))
+                .ToList();
+
             var logger = context.HttpContext.RequestServices
                 .GetRequiredService<ILogger<Program>>();
 
-            var errorsString = string.Join(",", errors.Select(kv => $"{kv.Key}: {kv.Value}"));
+            logger.LogError("Validation failed: {@Errors}", errors);
 
-            logger.LogError($"Ошибка валидации: {errorsString}");
+            var problemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Validation error",
+                Detail = "One or more validation errors occurred.",
+                Extensions =
+                {
+                    ["errors"] = errors
+                }
+            };
 
-            return new BadRequestObjectResult(customResponse);
+            return new BadRequestObjectResult(problemDetails);
         };
     }); 
 builder.Services.AddOpenApi();

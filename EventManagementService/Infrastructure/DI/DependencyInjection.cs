@@ -9,7 +9,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddSingleton<IEventRepository<EventModel>, EventRepository<EventModel>>();
+        services.AddSingleton<IEventRepository, EventRepository>();
         return services;
     }
 }

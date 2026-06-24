@@ -1,4 +1,5 @@
-﻿using EventManagementService.Application.Events.Dto;
+﻿using EventManagementService.Application.Common;
+using EventManagementService.Application.Events.Dto;
 using EventManagementService.Application.Events.Services;
 using EventManagementService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ public class EventController(IEventService eventService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<EventDto>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<EventDto>> GetAllEvents()
+    public ActionResult<PaginatedResult<EventDto>> GetAllEvents(int page = 1, int pageSize = 10, string? title = null, DateTime? from = null, DateTime? to = null)
     {
-        var events = eventService.GetAllEvents();
+        var events = eventService.GetAllEvents(page, pageSize, title,  from, to);
         return Ok(events);
     }
 
@@ -23,7 +24,7 @@ public class EventController(IEventService eventService) : ControllerBase
     public ActionResult<EventDto> GetEventById(int id)
     {
         var eventDto = eventService.GetEventById(id);
-        return eventDto == null ? NotFound() : Ok(eventDto);
+        return Ok(eventDto);
     }
 
     [HttpPost]
@@ -49,7 +50,7 @@ public class EventController(IEventService eventService) : ControllerBase
         var eventModel = MapToModel(request);
         var updatedEvent = eventService.UpdateEvent(eventModel, id);
 
-        return updatedEvent == null ? NotFound() : Ok(updatedEvent);
+        return Ok(updatedEvent);
     }
 
     [HttpDelete("{id}", Name = "DeleteEventById")]
@@ -58,7 +59,7 @@ public class EventController(IEventService eventService) : ControllerBase
     public IActionResult DeleteEventById(int id)
     {
         var deleted = eventService.DeleteEventById(id);
-        return deleted ? NoContent() : NotFound();
+        return NoContent();
     }
 
     private static EventModel MapToModel(CreateEventDto request)
