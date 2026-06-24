@@ -1,4 +1,5 @@
-﻿using EventManagementService.Application.Events.Services;
+using EventManagementService.Application.Bookings.Services;
+using EventManagementService.Application.Events.Services;
 using EventManagementService.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IEventService, EventService>();
+        services.AddScoped<IBookingService, BookingService>();
         return services;
     }
     

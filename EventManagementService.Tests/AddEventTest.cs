@@ -22,7 +22,7 @@ public class AddEventTest
             .Setup(r => r.Add(It.IsAny<EventModel>()))
             .Returns((EventModel e) =>
             {
-                e.Id = 1;
+                e.Id = Guid.NewGuid();
                 return e;
             });
 
@@ -233,7 +233,7 @@ public class AddEventTest
         var repo = CreateRepo();
         var service = new EventService(repo);
 
-        Assert.Throws<NotFoundException>(() => service.GetEventById(999));
+        Assert.Throws<NotFoundException>(() => service.GetEventById(Guid.NewGuid()));
     }
     
     [Fact]
@@ -287,7 +287,7 @@ public class AddEventTest
         };
 
         Assert.Throws<NotFoundException>(() =>
-            service.UpdateEvent(model, 999));
+            service.UpdateEvent(model, Guid.NewGuid()));
     }
     
     
